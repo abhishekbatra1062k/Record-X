@@ -10,7 +10,11 @@
         <h5>Keep Track of your Records Effectively!</h5>
         <hr>
         <br>
-        <a class="btn btn-primary" type="button" href="{% url 'register' %}">Create Your Account</a>
+        {% if not user.is_authenticated %}
+            <a class="btn btn-primary" type="button" href="{% url 'register' %}">Create Your Account &nbsp; <i class="fa fa-user-plus" aria-hidden="true"></i> </a>
+        {% else %}
+            <a class="btn btn-primary" href="{% url 'dashboard' %}">Go To Dashboard </a>
+        {% endif %}
     </div>
 </body>
 

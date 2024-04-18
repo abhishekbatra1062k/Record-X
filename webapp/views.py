@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from .forms import CreateUserForm, LoginForm, CreateRecordForm, UpdateRecordForm
 from .models import Record
@@ -19,6 +20,7 @@ def register(request):
         form = CreateUserForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Account Created Successfully!")
             return redirect('my-login')
     context = {"form": form}
     return render(request, 'webapp/register.html', context=context)
@@ -35,6 +37,7 @@ def my_login(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 auth.login(request, user)
+                messages.success(request, "Login Successful!")
                 return redirect('dashboard')
     context = {"form": form}
     return render(request, 'webapp/my-login.html', context=context)
@@ -56,6 +59,7 @@ def create_record(request):
         form = CreateRecordForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Your record was created!")
             return redirect('dashboard')
     context = {'form': form}
     return render(request, 'webapp/create-record.html', context=context)
@@ -70,6 +74,7 @@ def update_record(request, pk):
         form = UpdateRecordForm(request.POST, instance=record)
         if form.is_valid():
             form.save()
+            messages.success(request, "Your record was updated!")
             return redirect('dashboard')
     context = {'form': form}
     return render(request, 'webapp/update-record.html', context=context)
@@ -88,10 +93,12 @@ def singular_record(request, pk):
 def delete_record(request, pk):
     record = Record.objects.get(id=pk)
     record.delete()
+    messages.success(request, "Your record was deleted!")
     return redirect('dashboard')
 
 
 # Logout a User
 def user_logout(request):
     auth.logout(request)
+    messages.success(request, "Logout Successful!")
     return redirect('my-login')
